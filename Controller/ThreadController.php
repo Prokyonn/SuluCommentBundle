@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /*
  * This file is part of Sulu.
  *
@@ -114,12 +112,13 @@ class ThreadController extends AbstractRestController
         }
 
         $items = $listBuilder->execute();
+        $count = $listBuilder->count();
         $list = new PaginatedRepresentation(
             $items,
             'threads',
             $listBuilder->getCurrentPage(),
-            $listBuilder->getLimit() ?: $listBuilder->count(),
-            $listBuilder->count()
+            $listBuilder->getLimit() ?: $count,
+            $count
         );
 
         return $this->handleView($this->view($list, 200));
