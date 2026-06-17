@@ -4,8 +4,8 @@
         <property name="id" expose="true" type="integer"/>
         <property name="state" expose="true" type="string"/>
         <property name="message" expose="true" type="string"/>
-        <property name="created" expose="true" type="DateTime"/>
-        <property name="changed" expose="true" type="DateTime"/>
+        <property name="created" expose="true" type="DateTimeImmutable"/>
+        <property name="changed" expose="true" type="DateTimeImmutable"/>
 
         <property name="thread" expose="true" type="Sulu\Bundle\CommentBundle\Entity\Thread"/>
 

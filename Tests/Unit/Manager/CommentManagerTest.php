@@ -50,6 +50,11 @@ class CommentManagerTest extends TestCase
     private $commentManager;
 
     /**
+     * @var CommentEventCollector
+     */
+    private $commentEventCollector;
+
+    /**
      * @var ThreadInterface
      */
     private $thread;

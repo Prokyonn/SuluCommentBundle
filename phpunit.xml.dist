@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true" bootstrap="Tests/bootstrap.php">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         colors="true"
+         bootstrap="Tests/bootstrap.php"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         cacheDirectory=".phpunit.cache">
     <testsuites>
         <testsuite name="Sulu Comment Bundle">
             <directory>./Tests</directory>
@@ -8,6 +12,8 @@
 
     <php>
         <env name="KERNEL_CLASS" value="Sulu\Bundle\CommentBundle\Tests\Application\Kernel"/>
+        <env name="APP_ENV" value="test" force="true"/>
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak"/>
     </php>
 
     <source>

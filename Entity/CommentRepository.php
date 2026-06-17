@@ -145,7 +145,7 @@ class CommentRepository extends NestedTreeRepository implements CommentRepositor
 
     public function createNew(): CommentInterface
     {
-        /** @var CommentInterface $className */
+        /** @var class-string<CommentInterface> $className */
         $className = $this->getClassName();
 
         return new $className();

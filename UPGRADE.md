@@ -1,5 +1,74 @@
 # Upgrade
 
+## 3.0.0
+
+### Sulu 3.0 compatibility
+
+This version adds support for Sulu 3.0. The bundle now requires:
+
+- PHP 8.2 or higher
+- Sulu 3.0 or higher
+- Symfony 6.4 or 7.1 or higher
+- Doctrine ORM 2.17.3 or 3.3 or higher
+- FOSRestBundle 3.2 or higher
+
+### Removing the rest routing
+
+The Rest Routing bundle is no longer required. Remove `type: rest` from your
+admin and website route imports:
+
+```diff
+# config/routes/sulu_comment_admin.yaml
+ sulu_comment_api:
+-    type: rest
+     resource: "@SuluCommentBundle/Resources/config/routing_api.yaml"
+     prefix: /admin/api
+```
+
+```diff
+# config/routes/sulu_comment_website.yaml
+ sulu_comment:
+-    type: rest
+     resource: "@SuluCommentBundle/Resources/config/routing_website.yaml"
+```
+
+The generated paths and route names are kept unchanged.
+
+### REST list response changed
+
+The admin comments and threads list endpoints now return a
+`PaginatedRepresentation` instead of the removed `ListRepresentation`. The
+`_embedded.comments` and `_embedded.threads` arrays, `page`, `limit` and
+`total` fields are unchanged. The `_links` section no longer exposes the
+request route and query parameters.
+
+### Removed website comment pagination fallback
+
+The deprecated `page` and `pageSize` query parameters of the website comments
+endpoint have been removed. Use `limit` and `offset` instead:
+
+```diff
+-/_api/threads/page-123/comments?page=2&pageSize=10
++/_api/threads/page-123/comments?limit=10&offset=10
+```
+
+The `page` and `pageSize` variables are no longer passed to the rendered
+comments template. If a custom comments template uses those variables, calculate
+the pagination state in the application and pass it through custom content data.
+
+### Controller routing integration changed
+
+The controllers no longer implement FOSRestBundle's `ClassResourceInterface`
+and no longer use FOSRestBundle route annotations. If you extended these
+controllers or imported them with custom FOSRest route resources, switch to
+explicit Symfony route definitions.
+
+### Removed legacy test compatibility files
+
+The PHPUnit 9 configuration and the PHP 7.2 Prophecy bridge have been removed.
+Use the default `phpunit.xml.dist` configuration with the supported PHP and
+PHPUnit versions.
+
 ## dev-develop
 
 ### Rename comment_count property to commentCount

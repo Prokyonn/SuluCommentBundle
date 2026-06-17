@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of Sulu.
  *
@@ -106,10 +108,6 @@ class CommentManager implements CommentManagerInterface
 
     public function delete(array $ids): void
     {
-        if (!\is_array($ids)) {
-            $ids = [$ids];
-        }
-
         $comments = $this->commentRepository->findCommentsByIds($ids);
         foreach ($comments as $comment) {
             $this->deleteComment($comment);
@@ -125,10 +123,6 @@ class CommentManager implements CommentManagerInterface
 
     public function deleteThreads(array $ids): void
     {
-        if (!\is_array($ids)) {
-            $ids = [$ids];
-        }
-
         $threads = $this->threadRepository->findThreadsByIds($ids);
         foreach ($threads as $thread) {
             $this->deleteThread($thread);

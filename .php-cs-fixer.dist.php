@@ -15,6 +15,7 @@ $finder = PhpCsFixer\Finder::create()
 
 $config = new PhpCsFixer\Config();
 $config->setRiskyAllowed(true)
+    ->setParallelConfig(PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect())
     ->setRules([
         '@Symfony' => true,
         'array_syntax' => ['syntax' => 'short'],
@@ -33,7 +34,7 @@ $config->setRiskyAllowed(true)
         'single_line_throw' => false,
         'single_line_comment_spacing' => false,
         'phpdoc_to_comment' => [
-            'ignored_tags' => ['todo', 'var'],
+            'ignored_tags' => ['todo', 'var', 'param', 'return', 'see'],
         ],
         'phpdoc_separation' => [
             'groups' => [
@@ -43,7 +44,10 @@ $config->setRiskyAllowed(true)
         'get_class_to_class_keyword' => false, // should be enabled as soon as support for php < 8 is dropped
         'nullable_type_declaration_for_default_null_value' => true,
         'no_null_property_initialization' => false,
+        'fully_qualified_strict_types' => false,
+        'new_with_parentheses' => true,
         'trailing_comma_in_multiline' => ['after_heredoc' => true, 'elements' => ['array_destructuring', 'arrays', 'match']],
+        'no_useless_else' => false,
     ])
     ->setFinder($finder);
 

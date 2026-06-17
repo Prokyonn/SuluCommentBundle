@@ -23,6 +23,7 @@ class Kernel extends SuluTestKernel
     public function registerBundles(): iterable
     {
         $bundles = parent::registerBundles();
+        $bundles = \is_array($bundles) ? $bundles : \iterator_to_array($bundles);
         $bundles[] = new SuluCommentBundle();
 
         if (SuluTestKernel::CONTEXT_WEBSITE === $this->getContext()) {
@@ -38,12 +39,7 @@ class Kernel extends SuluTestKernel
 
         $context = $this->getContext();
         $loader->load(__DIR__ . '/config/config_' . $context . '.yml');
-
-        if (\class_exists(\Symfony\Bundle\SecurityBundle\Command\UserPasswordEncoderCommand::class)) { // detect Symfony <= 5.4
-            $loader->load(__DIR__ . '/config/security-5-4.yml');
-        } else {
-            $loader->load(__DIR__ . '/config/security-6.yml');
-        }
+        $loader->load(__DIR__ . '/config/security-6.yml');
     }
 
     /**

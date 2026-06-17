@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of Sulu.
  *
@@ -31,9 +33,9 @@ class Comment implements CommentInterface, AuditableInterface
     protected $state = self::STATE_PUBLISHED;
 
     /**
-     * @var string|null
+     * @var string
      */
-    protected $message;
+    protected $message = '';
 
     /**
      * @var ThreadInterface|null
@@ -61,7 +63,7 @@ class Comment implements CommentInterface, AuditableInterface
     protected $parent;
 
     /**
-     * @var Collection<int, CommentInterface>|CommentInterface[]
+     * @var Collection<int, CommentInterface>
      */
     protected $children;
 
@@ -70,6 +72,8 @@ class Comment implements CommentInterface, AuditableInterface
         $this->state = $state;
         $this->thread = $thread;
         $this->children = new ArrayCollection();
+        $this->created = new \DateTimeImmutable();
+        $this->changed = new \DateTimeImmutable();
 
         if ($this->thread && $this->isPublished()) {
             $this->thread->increaseCommentCount();
@@ -115,7 +119,7 @@ class Comment implements CommentInterface, AuditableInterface
 
     public function getMessage(): string
     {
-        return $this->message ?? '';
+        return $this->message;
     }
 
     public function setMessage(string $message): CommentInterface

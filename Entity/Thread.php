@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of Sulu.
  *
@@ -15,7 +17,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Sulu\Component\Persistence\Model\AuditableInterface;
 use Sulu\Component\Persistence\Model\AuditableTrait;
-use Sulu\Component\Security\Authentication\UserInterface;
 
 class Thread implements ThreadInterface, AuditableInterface
 {
@@ -37,7 +38,7 @@ class Thread implements ThreadInterface, AuditableInterface
     protected $entityId;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $title;
 
@@ -52,26 +53,6 @@ class Thread implements ThreadInterface, AuditableInterface
     protected $comments;
 
     /**
-     * @var \DateTime
-     */
-    protected $created;
-
-    /**
-     * @var \DateTime
-     */
-    protected $changed;
-
-    /**
-     * @var UserInterface
-     */
-    protected $changer;
-
-    /**
-     * @var UserInterface
-     */
-    protected $creator;
-
-    /**
      * @param Collection<int, CommentInterface>|null $comments
      */
     public function __construct(string $type, string $entityId, ?Collection $comments = null, int $commentCount = 0)
@@ -80,6 +61,8 @@ class Thread implements ThreadInterface, AuditableInterface
         $this->entityId = $entityId;
         $this->comments = $comments ?: new ArrayCollection();
         $this->commentCount = $commentCount;
+        $this->created = new \DateTimeImmutable();
+        $this->changed = new \DateTimeImmutable();
     }
 
     public function getId(): int
@@ -99,7 +82,7 @@ class Thread implements ThreadInterface, AuditableInterface
 
     public function getTitle(): string
     {
-        return $this->title;
+        return $this->title ?? '';
     }
 
     public function setTitle(string $title): ThreadInterface

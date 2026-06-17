@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of Sulu.
  *
@@ -12,7 +14,6 @@
 namespace Sulu\Bundle\CommentBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\RestBundle\Routing\ClassResourceInterface;
 use FOS\RestBundle\View\ViewHandlerInterface;
 use Sulu\Bundle\CommentBundle\Entity\ThreadInterface;
 use Sulu\Bundle\CommentBundle\Entity\ThreadRepositoryInterface;
@@ -21,14 +22,14 @@ use Sulu\Component\Rest\AbstractRestController;
 use Sulu\Component\Rest\Exception\EntityNotFoundException;
 use Sulu\Component\Rest\ListBuilder\Doctrine\DoctrineListBuilderFactoryInterface;
 use Sulu\Component\Rest\ListBuilder\FieldDescriptorInterface;
-use Sulu\Component\Rest\ListBuilder\ListRepresentation;
 use Sulu\Component\Rest\ListBuilder\Metadata\FieldDescriptorFactoryInterface;
+use Sulu\Component\Rest\ListBuilder\PaginatedRepresentation;
 use Sulu\Component\Rest\RequestParametersTrait;
 use Sulu\Component\Rest\RestHelperInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ThreadController extends AbstractRestController implements ClassResourceInterface
+class ThreadController extends AbstractRestController
 {
     use RequestParametersTrait;
 
@@ -63,10 +64,13 @@ class ThreadController extends AbstractRestController implements ClassResourceIn
     private $entityManager;
 
     /**
-     * @var string
+     * @var class-string<ThreadInterface>
      */
     private $threadClass;
 
+    /**
+     * @param class-string<ThreadInterface> $threadClass
+     */
     public function __construct(
         ViewHandlerInterface $viewHandler,
         RestHelperInterface $restHelper,
@@ -110,15 +114,11 @@ class ThreadController extends AbstractRestController implements ClassResourceIn
         }
 
         $items = $listBuilder->execute();
-        /** @var string $route */
-        $route = $request->attributes->get('_route');
-        $list = new ListRepresentation(
+        $list = new PaginatedRepresentation(
             $items,
             'threads',
-            $route,
-            $request->query->all(),
             $listBuilder->getCurrentPage(),
-            $listBuilder->getLimit(),
+            $listBuilder->getLimit() ?: $listBuilder->count(),
             $listBuilder->count()
         );
 

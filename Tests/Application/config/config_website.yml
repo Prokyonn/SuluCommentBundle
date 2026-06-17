@@ -14,7 +14,7 @@ security:
             id: test_user_provider
 
     access_control:
-       - { path: /login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+       - { path: /login, roles: PUBLIC_ACCESS }
 
     firewalls:
         test:

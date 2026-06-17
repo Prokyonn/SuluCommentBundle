@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of Sulu.
  *
@@ -34,7 +36,7 @@ interface ThreadInterface
     public function setCommentCount(int $commentCount): self;
 
     /**
-     * @return CommentInterface[]|Collection<int, CommentInterface>
+     * @return Collection<int, CommentInterface>
      */
     public function getComments(): Collection;
 

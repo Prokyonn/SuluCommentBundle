@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of Sulu.
  *
@@ -13,9 +15,6 @@ namespace Sulu\Bundle\CommentBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Context\Context;
-use FOS\RestBundle\Controller\Annotations\Post;
-use FOS\RestBundle\Controller\Annotations\RouteResource;
-use FOS\RestBundle\Routing\ClassResourceInterface;
 use FOS\RestBundle\View\View;
 use FOS\RestBundle\View\ViewHandlerInterface;
 use Sulu\Bundle\CommentBundle\Entity\Comment;
@@ -30,10 +29,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 
-/**
- * @RouteResource("thread")
- */
-class WebsiteCommentController extends AbstractRestController implements ClassResourceInterface
+class WebsiteCommentController extends AbstractRestController
 {
     /**
      * @var CommentManagerInterface
@@ -61,7 +57,7 @@ class WebsiteCommentController extends AbstractRestController implements ClassRe
     private $entityManager;
 
     /**
-     * @var string
+     * @var class-string<CommentInterface>
      */
     private $commentClass;
 
@@ -89,6 +85,7 @@ class WebsiteCommentController extends AbstractRestController implements ClassRe
      * @param array<string, array<string, mixed|mixed[]>> $commentTypes
      * @param array<string, string> $commentDefaultTemplates
      * @param array<string> $commentSerializationGroups
+     * @param class-string<CommentInterface> $commentClass
      */
     public function __construct(
         ViewHandlerInterface $viewHandler,
@@ -126,22 +123,6 @@ class WebsiteCommentController extends AbstractRestController implements ClassRe
 
         $limit = $request->query->getInt('limit', 10);
         $offset = $request->query->getInt('offset', 0);
-
-        /** @var int|null $pageSize */
-        $pageSize = $request->get('pageSize');
-        if ($pageSize) {
-            @trigger_deprecation('sulu/comment-bundle', '2.x', 'The usage of the "pageSize" parameter is deprecated.
-        Please use "limit" and "offset instead.');
-            $limit = $pageSize;
-        }
-
-        $page = $request->get('page');
-        if ($page) {
-            @trigger_deprecation('sulu/comment-bundle', '2.x', 'The usage of the "page" parameter is deprecated.
-            Please use "limit" and "offset instead.');
-
-            $offset = ($page - 1) * $limit;
-        }
 
         $referrer = $request->get('referrer');
 
@@ -184,8 +165,6 @@ class WebsiteCommentController extends AbstractRestController implements ClassRe
                 'threadId' => $threadId,
                 'referrer' => $referrer,
                 'totalComments' => $totalComments,
-                'page' => $page ?: 1,
-                'pageSize' => $page ? $pageSize : null,
             ],
             $this->getAdditionalContentData($request)
         );
@@ -246,10 +225,10 @@ class WebsiteCommentController extends AbstractRestController implements ClassRe
         /** @var CommentInterface $comment */
         $comment = $this->commentRepository->createNew();
 
-        /** @var int|null $parent */
+        /** @var string|null $parent */
         $parent = $request->get('parent');
         if ($parent) {
-            $comment->setParent($this->commentRepository->findCommentById($parent));
+            $comment->setParent($this->commentRepository->findCommentById((int) $parent));
         }
 
         $form = $this->formFactory->create(
@@ -294,9 +273,6 @@ class WebsiteCommentController extends AbstractRestController implements ClassRe
         );
     }
 
-    /**
-     * @Post("/threads/{threadId}/comments/{commentId}")
-     */
     public function putCommentAction(string $threadId, string $commentId, Request $request): Response
     {
         list($type, $entityId) = $this->getThreadIdParts($threadId);
@@ -341,15 +317,15 @@ class WebsiteCommentController extends AbstractRestController implements ClassRe
         }
 
         if ('json' === $request->getRequestFormat()) {
-            return $this->handleView($this->view());
+            return $this->handleView($this->view(null, Response::HTTP_OK, ['Content-Type' => 'application/json']));
         }
 
-        return new Response();
+        return new Response('', Response::HTTP_OK, ['Content-Type' => 'text/html; charset=UTF-8']);
     }
 
     /**
      * @param mixed|null $data
-     * @param string|null $statusCode
+     * @param int|null $statusCode
      * @param mixed[] $headers
      *
      * @return View

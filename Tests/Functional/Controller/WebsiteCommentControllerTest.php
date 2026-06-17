@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of Sulu.
  *
@@ -11,6 +13,7 @@
 
 namespace Functional\Controller;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Sulu\Bundle\CommentBundle\Entity\CommentInterface;
 use Sulu\Bundle\CommentBundle\Entity\ThreadInterface;
 use Sulu\Bundle\TestBundle\Testing\SuluTestCase;
@@ -31,10 +34,9 @@ class WebsiteCommentControllerTest extends SuluTestCase
     {
         $this->client = $this->createAuthenticatedWebsiteClient();
         $this->purgeDatabase();
-        $this->initPhpcr();
     }
 
-    public function providePostData()
+    public static function providePostData(): array
     {
         return [
             [],
@@ -42,9 +44,7 @@ class WebsiteCommentControllerTest extends SuluTestCase
         ];
     }
 
-    /**
-     * @dataProvider providePostData
-     */
+    #[DataProvider('providePostData')]
     public function testPostComment(
         $type = 'blog',
         $entityId = '1',
@@ -74,9 +74,7 @@ class WebsiteCommentControllerTest extends SuluTestCase
         return $thread;
     }
 
-    /**
-     * @dataProvider providePostData
-     */
+    #[DataProvider('providePostData')]
     public function testPostCommentWithParent(
         $type = 'blog',
         $entityId = '1',
@@ -144,7 +142,7 @@ class WebsiteCommentControllerTest extends SuluTestCase
         $this->assertCount(1, $thread->getComments());
     }
 
-    public function providePostAuditableData()
+    public static function providePostAuditableData(): array
     {
         return [
             ['created'],
@@ -154,9 +152,7 @@ class WebsiteCommentControllerTest extends SuluTestCase
         ];
     }
 
-    /**
-     * @dataProvider providePostAuditableData
-     */
+    #[DataProvider('providePostAuditableData')]
     public function testPostAuditable($field, $type = 'blog', $entityId = '1')
     {
         $this->client->request(
@@ -293,11 +289,32 @@ class WebsiteCommentControllerTest extends SuluTestCase
         $this->assertEquals('Sulu is awesome', $response[1]['message']);
     }
 
+    public function testGetCommentsWithLimitAndOffset($type = 'blog', $entityId = '1')
+    {
+        $this->postComment($type, $entityId, 'First comment');
+        \sleep(1);
+        $this->postComment($type, $entityId, 'Second comment');
+        \sleep(1);
+        $this->postComment($type, $entityId, 'Third comment');
+
+        $this->client->request(
+            'GET',
+            '_api/threads/' . $type . '-' . $entityId . '/comments.json?limit=1&offset=1'
+        );
+
+        $this->assertHttpStatusCode(200, $this->client->getResponse());
+
+        $response = \json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertCount(1, $response);
+        $this->assertEquals(CommentInterface::STATE_PUBLISHED, $response[0]['state']);
+        $this->assertEquals('Second comment', $response[0]['message']);
+    }
+
     public function testGetCommentsHtmlThreadTitle()
     {
         $crawler = $this->client->request(
             'GET',
-            '/'
+            '_api/threads/page-123/comments?threadTitle=This%20is%20my%20title'
         );
 
         $input = $crawler->filter('input[type="hidden"]');

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of Sulu.
  *
@@ -27,6 +29,24 @@ class SuluCommentExtension extends Extension implements PrependExtensionInterfac
 
     public function prepend(ContainerBuilder $container): void
     {
+        if ($container->hasExtension('doctrine')) {
+            $container->prependExtensionConfig(
+                'doctrine',
+                [
+                    'orm' => [
+                        'mappings' => [
+                            'SuluCommentBundle' => [
+                                'type' => 'xml',
+                                'dir' => __DIR__ . '/../Resources/config/doctrine',
+                                'prefix' => 'Sulu\Bundle\CommentBundle\Entity',
+                                'alias' => 'SuluCommentBundle',
+                            ],
+                        ],
+                    ],
+                ]
+            );
+        }
+
         if ($container->hasExtension('jms_serializer')) {
             $container->prependExtensionConfig(
                 'jms_serializer',
@@ -79,6 +99,7 @@ class SuluCommentExtension extends Extension implements PrependExtensionInterfac
     public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = new Configuration();
+        /** @var array{objects: array<string, array{model: class-string, repository?: class-string}>, types: array<string, array<string, mixed>>, default_templates: array<string, string>, nested_comments: bool, serializer: array{groups: string[]}} $config */
         $config = $this->processConfiguration($configuration, $configs);
 
         $this->configurePersistence($config['objects'], $container);
