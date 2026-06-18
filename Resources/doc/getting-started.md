@@ -6,7 +6,7 @@ Following example works for a page:
 
 ```twig
 {{ render(path('sulu_comment.get_threads_comments', {
-    threadId: 'page-' ~ uuid, 
+    threadId: 'page-' ~ resource.uuid, 
     referrer: app.request.uri,
     threadTitle: 'This is my thread title', 
     _format: 'html'
