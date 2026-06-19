@@ -19,7 +19,7 @@
     "require-dev": {
         "doctrine/doctrine-bundle": "^2.6 || ^3.0",
         "handcraftedinthealps/zendsearch": "^2.0",
-        "jackalope/jackalope-doctrine-dbal": "^2.0",
+        "jackalope/jackalope-doctrine-dbal": "^1.6 || ^2.0",
         "jangregor/phpstan-prophecy": "^2.0",
         "massive/search-bundle": "^2.0.0",
         "php-cs-fixer/shim": "^3.14",
