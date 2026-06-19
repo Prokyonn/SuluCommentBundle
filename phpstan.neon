@@ -1,25 +1,35 @@
 includes:
+    - phpstan-baseline.neon
     - vendor/jangregor/phpstan-prophecy/extension.neon
     - vendor/phpstan/phpstan-doctrine/extension.neon
     - vendor/phpstan/phpstan-doctrine/rules.neon
     - vendor/phpstan/phpstan-symfony/extension.neon
     - vendor/phpstan/phpstan-phpunit/extension.neon
     - vendor/phpstan/phpstan-phpunit/rules.neon
-    - vendor/thecodingmachine/phpstan-strict-rules/phpstan-strict-rules.neon
+    - vendor/phpstan/phpstan-webmozart-assert/extension.neon
+    - vendor/spaze/phpstan-disallowed-calls/extension.neon
 
 parameters:
+    phpVersion: 80200
     paths:
         - .
     level: max
+    reportUnmatchedIgnoredErrors: false
     excludePaths:
         - %currentWorkingDirectory%/DependencyInjection/Configuration.php
+        - %currentWorkingDirectory%/Tests/Application/var/*
         - %currentWorkingDirectory%/Tests/*
         - %currentWorkingDirectory%/vendor/*
+    disallowedMethodCalls:
+        -
+            method: 'Doctrine\Common\Collections\Collection::clear()'
+            message: 'use add and removeElement methods instead of clear to avoid unintended data loss if domain event listeners reflush during postFlush event'
+    ignoreErrors:
+        -
+            identifier: doctrine.associationType
     symfony:
-        container_xml_path: %rootDir%/../../../Tests/Application/var/cache/admin/dev/Sulu_Bundle_CommentBundle_Tests_Application_KernelDevDebugContainer.xml
-        console_application_loader: Tests/phpstan/console-application.php
+        containerXmlPath: %currentWorkingDirectory%/Tests/Application/var/cache/admin/dev/Sulu_Bundle_CommentBundle_Tests_Application_KernelDevDebugContainer.xml
+        consoleApplicationLoader: Tests/phpstan/console-application.php
+        constantHassers: false
     doctrine:
         objectManagerLoader: Tests/phpstan/object-manager.php
-    ignoreErrors:
-        - "#^Property .* type mapping mismatch\\: property can contain .* but database .*$#"
-        - "#^Property .* type mapping mismatch\\: database can contain .* but property .*$#"

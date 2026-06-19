@@ -6,67 +6,69 @@ on:
         branches:
             - '[0-9]+.x'
             - '[0-9]+.[0-9]+'
+    workflow_dispatch:
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
 
 jobs:
-    test:
+    php:
         name: 'PHP ${{ matrix.php-version }} (${{ matrix.dependency-versions }})'
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-22.04
+        timeout-minutes: 30
 
         env:
-            DATABASE_URL: 'mysql://root:root@127.0.0.1/sulu_comment_test?serverVersion=5.7'
+            COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
         strategy:
             fail-fast: false
             matrix:
                 include:
-                    - php-version: '7.2'
+                    - php-version: '8.2'
                       dependency-versions: 'lowest'
-                      tools: 'composer:v2'
-                      phpunit-config: 'phpunit-9.xml.dist'
-                      env:
-                          SYMFONY_DEPRECATIONS_HELPER: disabled
-
-                    - php-version: '7.4'
-                      dependency-versions: 'highest'
-                      tools: 'composer:v2'
-                      phpunit-config: 'phpunit-9.xml.dist'
-                      env:
-                          SYMFONY_DEPRECATIONS_HELPER: disabled
-
-                    - php-version: '8.0'
-                      dependency-versions: 'highest'
+                      php-extensions: 'ctype, iconv, mysql, gd'
                       tools: 'composer:v2'
                       env:
                           SYMFONY_DEPRECATIONS_HELPER: disabled
-
-                    - php-version: '8.1'
-                      dependency-versions: 'highest'
-                      tools: 'composer:v2'
-                      env:
-                          SYMFONY_DEPRECATIONS_HELPER: disabled
+                          DATABASE_URL: 'mysql://root:root@127.0.0.1:3306/sulu_comment_test?serverVersion=8.0&charset=utf8mb4'
 
                     - php-version: '8.2'
                       dependency-versions: 'highest'
+                      php-extensions: 'ctype, iconv, mysql, gd'
                       tools: 'composer:v2'
                       env:
-                          SYMFONY_DEPRECATIONS_HELPER: disabled
+                          SYMFONY_DEPRECATIONS_HELPER: weak
+                          DATABASE_URL: 'mysql://root:root@127.0.0.1:3306/sulu_comment_test?serverVersion=8.0&charset=utf8mb4'
 
                     - php-version: '8.3'
                       dependency-versions: 'highest'
+                      php-extensions: 'ctype, iconv, mysql, gd'
                       tools: 'composer:v2'
                       env:
                           SYMFONY_DEPRECATIONS_HELPER: weak
+                          DATABASE_URL: 'mysql://root:root@127.0.0.1:3306/sulu_comment_test?serverVersion=8.0&charset=utf8mb4'
 
                     - php-version: '8.4'
                       dependency-versions: 'highest'
+                      php-extensions: 'ctype, iconv, mysql, gd'
                       tools: 'composer:v2'
-                      composer-options: '--ignore-platform-reqs'
                       env:
                           SYMFONY_DEPRECATIONS_HELPER: weak
+                          DATABASE_URL: 'mysql://root:root@127.0.0.1:3306/sulu_comment_test?serverVersion=8.0&charset=utf8mb4'
+
+                    - php-version: '8.5'
+                      dependency-versions: 'highest'
+                      php-extensions: 'ctype, iconv, mysql, gd'
+                      tools: 'composer:snapshot'
+                      composer-stability: 'dev'
+                      env:
+                          SYMFONY_DEPRECATIONS_HELPER: weak
+                          DATABASE_URL: 'mysql://root:root@127.0.0.1:3306/sulu_comment_test?serverVersion=8.0&charset=utf8mb4'
 
         services:
             mysql:
-                image: mysql:5.7
+                image: mysql:8.0
                 env:
                     MYSQL_ROOT_PASSWORD: root
                 ports:
@@ -81,22 +83,24 @@ jobs:
               uses: shivammathur/setup-php@v2
               with:
                   php-version: ${{ matrix.php-version }}
-                  extensions: 'mysql, gd'
+                  extensions: ${{ matrix.php-extensions }}
                   tools: ${{ matrix.tools }}
-
-            - name: Remove phpspec/prophecy-phpunit
-              if: ${{ matrix.php-version == '7.2' }}
-              run: composer remove phpspec/prophecy-phpunit --no-update --dev
+                  ini-values: memory_limit=-1
+                  coverage: none
 
             - name: Remove Lint Tools
               # These tools are not required to run tests, so we are removing them to improve dependency resolving and
               # testing lowest versions.
               run: composer remove "*php-cs-fixer*" "*phpstan*" "*rector*" --dev --no-update
 
+            - name: Set composer stability
+              if: ${{ matrix.composer-stability }}
+              run: composer config minimum-stability ${{ matrix.composer-stability }}
+
             - name: Install composer dependencies
-              uses: ramsey/composer-install@v2
+              uses: ramsey/composer-install@v3
               with:
-                  dependency-versions: ${{matrix.dependency-versions}}
+                  dependency-versions: ${{ matrix.dependency-versions }}
                   composer-options: ${{ matrix.composer-options }}
 
             - name: Bootstrap test environment
@@ -104,15 +108,17 @@ jobs:
               env: ${{ matrix.env }}
 
             - name: Execute test cases
-              run: composer test -- --config ${{ matrix.phpunit-config || 'phpunit.xml.dist' }}
+              run: time composer test
               env: ${{ matrix.env }}
 
-    lint:
+    php-lint:
         name: 'PHP Lint'
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-22.04
+        timeout-minutes: 30
 
         env:
-            DATABASE_URL: 'mysql://root:root@127.0.0.1/sulu_comment_test?serverVersion=5.7'
+            COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            DATABASE_URL: 'mysql://root:root@127.0.0.1:3306/sulu_comment_test?serverVersion=8.0&charset=utf8mb4'
 
         steps:
             - name: Checkout project
@@ -121,12 +127,14 @@ jobs:
             - name: Install and configure PHP
               uses: shivammathur/setup-php@v2
               with:
-                  php-version: 8.3
-                  extensions: 'mysql, gd'
+                  php-version: '8.3'
+                  extensions: 'ctype, iconv, mysql, gd'
                   tools: 'composer:v2'
+                  ini-values: memory_limit=-1
+                  coverage: none
 
             - name: Install composer dependencies
-              uses: ramsey/composer-install@v2
+              uses: ramsey/composer-install@v3
               with:
                   dependency-versions: 'highest'
 

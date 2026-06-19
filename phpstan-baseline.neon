@@ -1,0 +1,133 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Parameter \#1 \$backView of method Sulu\\Bundle\\AdminBundle\\Admin\\View\\ResourceTabViewBuilderInterface\:\:setBackView\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: Admin/CommentAdmin.php
+
+		-
+			message: '#^Parameter \#1 \$editView of method Sulu\\Bundle\\AdminBundle\\Admin\\View\\ListViewBuilderInterface\:\:setEditView\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: Admin/CommentAdmin.php
+
+		-
+			message: '#^Parameter \#1 \$name of method Sulu\\Bundle\\AdminBundle\\Admin\\View\\ViewBuilderFactoryInterface\:\:createFormViewBuilder\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: Admin/CommentAdmin.php
+
+		-
+			message: '#^Parameter \#1 \$name of method Sulu\\Bundle\\AdminBundle\\Admin\\View\\ViewBuilderFactoryInterface\:\:createListViewBuilder\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: Admin/CommentAdmin.php
+
+		-
+			message: '#^Parameter \#1 \$name of method Sulu\\Bundle\\AdminBundle\\Admin\\View\\ViewBuilderFactoryInterface\:\:createResourceTabViewBuilder\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: Admin/CommentAdmin.php
+
+		-
+			message: '#^Parameter \#1 \$parent of method Sulu\\Bundle\\AdminBundle\\Admin\\View\\ViewBuilderInterface\:\:setParent\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: Admin/CommentAdmin.php
+
+		-
+			message: '#^Parameter \#1 \$view of method Sulu\\Bundle\\AdminBundle\\Admin\\Navigation\\NavigationItem\:\:setView\(\) expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: Admin/CommentAdmin.php
+
+		-
+			message: '#^Parameter \#1 \$entityName of method Sulu\\Component\\Rest\\ListBuilder\\Doctrine\\DoctrineListBuilderFactoryInterface\:\:create\(\) expects class\-string, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: Controller/CommentController.php
+
+		-
+			message: '#^Parameter \#1 \$entityName of method Sulu\\Component\\Rest\\ListBuilder\\Doctrine\\DoctrineListBuilderFactoryInterface\:\:create\(\) expects class\-string, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: Controller/ThreadController.php
+
+		-
+			message: '#^Binary operation "\-" between mixed and 1 results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: Controller/WebsiteCommentController.php
+
+		-
+			message: '#^Cannot access offset ''groups'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: DependencyInjection/SuluCommentExtension.php
+
+		-
+			message: '#^Parameter \#1 \$objects of method Sulu\\Bundle\\CommentBundle\\DependencyInjection\\SuluCommentExtension\:\:configurePersistence\(\) expects array\<string, array\{model\: class\-string, repository\?\: class\-string\}\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: DependencyInjection/SuluCommentExtension.php
+
+		-
+			message: '#^Parameter \#2 \$value of method Symfony\\Component\\DependencyInjection\\Container\:\:setParameter\(\) expects array\|bool\|float\|int\|string\|UnitEnum\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 4
+			path: DependencyInjection/SuluCommentExtension.php
+
+		-
+			message: '#^Cannot call method filter\(\) on array\<Sulu\\Bundle\\CommentBundle\\Entity\\CommentInterface\>\|Doctrine\\Common\\Collections\\Collection\<int, Sulu\\Bundle\\CommentBundle\\Entity\\CommentInterface\>\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: Entity/Comment.php
+
+		-
+			message: '#^Method Sulu\\Bundle\\CommentBundle\\Entity\\Comment\:\:getChildren\(\) should return Doctrine\\Common\\Collections\\Collection\<int, Sulu\\Bundle\\CommentBundle\\Entity\\CommentInterface\> but returns array\<Sulu\\Bundle\\CommentBundle\\Entity\\CommentInterface\>\|Doctrine\\Common\\Collections\\Collection\<int, Sulu\\Bundle\\CommentBundle\\Entity\\CommentInterface\>\.$#'
+			identifier: return.type
+			count: 1
+			path: Entity/Comment.php
+
+		-
+			message: '#^Property Sulu\\Bundle\\CommentBundle\\Entity\\Comment\:\:\$message type mapping mismatch\: property can contain string\|null but database expects string\.$#'
+			identifier: doctrine.columnType
+			count: 1
+			path: Entity/Comment.php
+
+		-
+			message: '#^Property Sulu\\Bundle\\CommentBundle\\Entity\\Thread\:\:\$title type mapping mismatch\: database can contain string\|null but property expects string\.$#'
+			identifier: doctrine.columnType
+			count: 1
+			path: Entity/Thread.php
+
+		-
+			message: '#^Method Sulu\\Bundle\\CommentBundle\\Entity\\ThreadInterface\:\:getComments\(\) return type with generic interface Doctrine\\Common\\Collections\\Collection does not specify its types\: TKey, T$#'
+			identifier: missingType.generics
+			count: 1
+			path: Entity/ThreadInterface.php
+
+		-
+			message: '#^PHPDoc tag @return with type array\<Sulu\\Bundle\\CommentBundle\\Entity\\CommentInterface\>\|Doctrine\\Common\\Collections\\Collection\<int, Sulu\\Bundle\\CommentBundle\\Entity\\CommentInterface\> is not subtype of native type Doctrine\\Common\\Collections\\Collection\.$#'
+			identifier: return.phpDocType
+			count: 1
+			path: Entity/ThreadInterface.php
+
+		-
+			message: '#^Instanceof between Sulu\\Bundle\\CommentBundle\\Entity\\Comment and Sulu\\Bundle\\CommentBundle\\Entity\\Comment will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: EventSubscriber/CommentSerializationSubscriber.php
+
+		-
+			message: '#^Class Sulu\\Bundle\\CommentBundle\\Form\\Type\\CommentType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: Form/Type/CommentType.php
+
+		-
+			message: '#^Call to function is_array\(\) with array\<int\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 2
+			path: Manager/CommentManager.php

@@ -1,6 +1,7 @@
 # PHPUnit
 /app/phpunit.xml
 /phpunit.xml
+.phpunit.cache/
 .phpunit.result.cache
 
 # composer

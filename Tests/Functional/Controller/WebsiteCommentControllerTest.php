@@ -34,7 +34,7 @@ class WebsiteCommentControllerTest extends SuluTestCase
         $this->initPhpcr();
     }
 
-    public function providePostData()
+    public static function providePostData()
     {
         return [
             [],
@@ -42,9 +42,7 @@ class WebsiteCommentControllerTest extends SuluTestCase
         ];
     }
 
-    /**
-     * @dataProvider providePostData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('providePostData')]
     public function testPostComment(
         $type = 'blog',
         $entityId = '1',
@@ -74,9 +72,7 @@ class WebsiteCommentControllerTest extends SuluTestCase
         return $thread;
     }
 
-    /**
-     * @dataProvider providePostData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('providePostData')]
     public function testPostCommentWithParent(
         $type = 'blog',
         $entityId = '1',
@@ -144,7 +140,7 @@ class WebsiteCommentControllerTest extends SuluTestCase
         $this->assertCount(1, $thread->getComments());
     }
 
-    public function providePostAuditableData()
+    public static function providePostAuditableData()
     {
         return [
             ['created'],
@@ -154,9 +150,7 @@ class WebsiteCommentControllerTest extends SuluTestCase
         ];
     }
 
-    /**
-     * @dataProvider providePostAuditableData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('providePostAuditableData')]
     public function testPostAuditable($field, $type = 'blog', $entityId = '1')
     {
         $this->client->request(
